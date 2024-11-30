@@ -15,4 +15,9 @@ const server = http.createServer(app); //http server
 const wss = new WebSocket.Server({ server }); //websocket server (on top of the http server)
 //{server} -> can run both http & websocket servers (on the same port)
 
+function handleConnection(socket) { console.log(socket) }
+
+//connection은 메서드로 socket을 받아서 저장해야 함, socket은 브라우저와의 연결
+wss.on("connection", handleConnection);
+
 server.listen(3000, handleListen);
