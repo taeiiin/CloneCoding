@@ -1,6 +1,7 @@
 import http from "http";
 import express from "express";
-import WebSocket from "ws";
+import SocketIO from "socket.io";
+//import WebSocket from "ws";
 
 const app = express();
 
@@ -11,7 +12,16 @@ app.get("/", (req, res) => res.render("home"));
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`); //ws://localhost:3000 also OK
 
-const server = http.createServer(app); //http server
+const httpServer = http.createServer(app); //http server
+const wsServer = SocketIO(httpServer);
+
+wsServer.on("connection", socket => {
+    console.log(socket);
+})
+
+/*
+//WebSocket Code
+
 const wss = new WebSocket.Server({ server }); //websocket server (on top of the http server)
 //{server} -> can run both http & websocket servers (on the same port)
 
@@ -35,5 +45,6 @@ wss.on("connection", (socket) => {
         }
     });
 });
+*/
 
-server.listen(3000, handleListen);
+httpServer.listen(3000, handleListen);
