@@ -1,6 +1,7 @@
 import http from "http";
 import express from "express";
 import SocketIO from "socket.io";
+import { copyFileSync } from "fs";
 //import WebSocket from "ws";
 
 const app = express();
@@ -14,6 +15,19 @@ const handleListen = () => console.log(`Listening on http://localhost:3000`); //
 
 const httpServer = http.createServer(app); //http server
 const wsServer = SocketIO(httpServer);
+
+function publicRooms() {
+    const {
+        sockets: {
+            adapter: {sids, rooms}}}  = wsServer;
+    const publicRooms = [];
+    rooms.forEach((_, key) => {
+        if(sids.get(key) === undefined) {
+            publicRooms.push(key)
+        }
+    });
+    return publicRooms;
+}
 
 wsServer.on("connection", (socket) => {
     socket["nickname"] = "Anon";
