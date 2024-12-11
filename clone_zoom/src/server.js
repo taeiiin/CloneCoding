@@ -1,8 +1,9 @@
 import http from "http";
 import express from "express";
-import SocketIO from "socket.io";
+import { Server } from "socket.io";
 import { copyFileSync } from "fs";
 import { count } from "console";
+import { instrument } from "@socket.io/admin-ui";
 //import WebSocket from "ws";
 
 const app = express();
@@ -15,7 +16,15 @@ app.get("/", (req, res) => res.render("home"));
 const handleListen = () => console.log(`Listening on http://localhost:3000`); //ws://localhost:3000 also OK
 
 const httpServer = http.createServer(app); //http server
-const wsServer = SocketIO(httpServer);
+const wsServer = new Server(httpServer, {
+    cors: {
+        origin: ["https://admin.socket.io"],
+        credentials: true,
+    }
+});
+instrument(wsServer, {
+    auth: false
+});
 
 function publicRooms() {
     const {
