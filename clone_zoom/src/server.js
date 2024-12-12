@@ -1,6 +1,7 @@
 import http from "http";
 import express from "express";
-import { Server } from "socket.io";
+import SocketIO from "socket.io";
+//import { Server } from "socket.io";
 import { copyFileSync } from "fs";
 import { count } from "console";
 import { instrument } from "@socket.io/admin-ui";
@@ -11,11 +12,14 @@ const app = express();
 app.set("view engine", "pug");
 app.set("views", __dirname + "/views");
 app.use("/public", express.static(__dirname + "/public"));
-app.get("/", (req, res) => res.render("home"));
-
-const handleListen = () => console.log(`Listening on http://localhost:3000`); //ws://localhost:3000 also OK
+app.get("/", (_, res) => res.render("home"));
+app.get("/*", (_, res) => res.redirect("/"));
 
 const httpServer = http.createServer(app); //http server
+const wsServer = SocketIO(httpServer);
+
+/*
+//Chatting Code
 const wsServer = new Server(httpServer, {
     cors: {
         origin: ["https://admin.socket.io"],
@@ -66,6 +70,7 @@ wsServer.on("connection", (socket) => {
     });
     socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
 });
+*/
 
 /*
 //WebSocket Code
@@ -95,4 +100,5 @@ wss.on("connection", (socket) => {
 });
 */
 
+const handleListen = () => console.log(`Listening on http://localhost:3000`); //ws://localhost:3000 also OK
 httpServer.listen(3000, handleListen);
